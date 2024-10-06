@@ -39,6 +39,7 @@ Farm Merger is an automated tool designed to assist players in the Farm Merge Va
    cd farm_merger
    python main.py
    python main.py --merge_count 3 # 5 is the default merge count
+   python main.py --resize_factor 1.5
    ```
 
 2. Follow the on-screen instructions to set up the merging area and count.

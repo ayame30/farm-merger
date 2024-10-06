@@ -11,13 +11,17 @@ import argparse
 # Set up argument parser
 parser = argparse.ArgumentParser(description='Farm Merge Clicker')
 parser.add_argument('--merge_count', type=int, default=5, help='Number of items to merge')
+parser.add_argument('--resize_factor', type=float, help='Resize factor for image recognition (optional)')
+
 args = parser.parse_args()
 
 # Use the command-line argument for MERGE_COUNT
 MERGE_COUNT = args.merge_count
+resize_factor = args.resize_factor
 
 print(f"Merge count set to: {MERGE_COUNT}")
-
+print(f"Resize factor set to: {resize_factor}")
+# Use the command-line argument for RESIZE_FACTOR if provided, otherwise set to None
 def get_screen_area():
     selector = ScreenAreaSelector()
     return selector.get_coordinates()
@@ -49,7 +53,9 @@ if __name__ == "__main__":
 
     screen_start_x, screen_start_y, screen_end_x, screen_end_y = get_screen_area()
     clicked_points = get_merge_points(MERGE_COUNT - 1)
-    resize_factor = ImageFinder.find_best_resize_factor()
+    if resize_factor is None:
+        resize_factor = ImageFinder.find_best_resize_factor()
+    print(f"Using resize factor: {resize_factor}")
 
     img_folder = './img'
     image_files = get_image_file_paths(img_folder)
