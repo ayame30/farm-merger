@@ -6,6 +6,16 @@ Farm Merger is an automated tool designed to assist players in the Farm Merge Va
 
 **This project serves as an educational tool for learning and practicing various programming concepts and technologies**
 
+
+
+<div align="center">
+  <div style="display: flex; justify-content: space-around;">
+    <img src="./screenshot.webp" alt="Farm Merger Screenshots"">
+  </div>
+</div>
+
+
+
 ## Features
 
 - Automatic detection of mergeable items on the screen
