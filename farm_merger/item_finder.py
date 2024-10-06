@@ -4,7 +4,7 @@ import pyautogui
 
 class ImageFinder:
     @staticmethod
-    def find_best_resize_factor(threshold=0.8):
+    def find_best_resize_factor(threshold=0.75):
         print("Finding best resize factor")
         best_factor = 0.5
         image_paths = ['./img/cow1.png', './img/wheat1.png', './img/chicken1.png', './img/soybean1.png', './img/corn1.png']
@@ -18,7 +18,7 @@ class ImageFinder:
         raise Exception("No matches found")
 
     @staticmethod
-    def find_image_on_screen(image_path, start_x, start_y, end_x, end_y, resize_factor=1, threshold=0.8):
+    def find_image_on_screen(image_path, start_x, start_y, end_x, end_y, resize_factor=1, threshold=0.75):
         # Load the template image
         # Log the template image loading
         template = cv2.imread(image_path, cv2.IMREAD_COLOR)
