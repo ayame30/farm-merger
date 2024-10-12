@@ -65,6 +65,8 @@ if __name__ == "__main__":
         for target_image in image_files:
             # Find the center points of the template images
             template_center_points, modified_screenshot = ImageFinder.find_image_on_screen(target_image, screen_start_x, screen_start_y, screen_end_x, screen_end_y, resize_factor)
+            if len(template_center_points) != 0:
+                print(f"Found {len(template_center_points)} for {target_image}")
             # Check if there are enough template center points and clicked points
             if len(template_center_points) > MERGE_COUNT - 1 and len(clicked_points) >= MERGE_COUNT - 1:
                 # Perform the dragging operation for the first 4 points
@@ -77,7 +79,6 @@ if __name__ == "__main__":
                     # Move the mouse to the starting point
                     pyautogui.mouseUp()
                     pyautogui.moveTo(start_x, start_y)
-                    pyautogui.click(start_x, start_y)
                     pyautogui.mouseDown()
                     pyautogui.moveTo(end_x, end_y, duration=0.1)
                     pyautogui.mouseUp()

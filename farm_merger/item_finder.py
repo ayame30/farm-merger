@@ -2,20 +2,29 @@ import cv2
 import numpy as np
 import pyautogui
 
+
+# Define special thresholds for specific images
+special_thresholds = {
+    'sugar3.png': 0.7,
+}
+
 class ImageFinder:
     @staticmethod
-    def find_best_resize_factor(threshold=0.75):
+    def find_best_resize_factor(threshold=0.80):
         print("Finding best resize factor")
         best_factor = 0.5
+        best_total_matches = 0
         image_paths = ['./img/cow1.png', './img/wheat1.png', './img/chicken1.png', './img/soybean1.png', './img/corn1.png']
-        for factor in np.arange(0.8, 2.1, 0.05):  # From 0.8 to 2.0 with 0.1 step
+        for factor in np.arange(0.8, 2.1, 0.1):  # From 0.8 to 2.0 with 0.1 step
             total_matches = 0
             for image_path in image_paths:
                 screen_points, _ = ImageFinder.find_image_on_screen(image_path, 0, 0, pyautogui.size()[0], pyautogui.size()[1], resize_factor=factor, threshold=threshold)
                 total_matches += len(screen_points)
-                if total_matches > 0:
-                    return factor
-        raise Exception("No matches found")
+            if total_matches > best_total_matches:
+                best_total_matches = total_matches
+                best_factor = factor
+
+        return best_factor
 
     @staticmethod
     def find_image_on_screen(image_path, start_x, start_y, end_x, end_y, resize_factor=1, threshold=0.75):
@@ -35,7 +44,11 @@ class ImageFinder:
         result = cv2.matchTemplate(screenshot, template, cv2.TM_CCOEFF_NORMED)
         
         # Find all matches above the threshold
-        locations = np.where(result >= threshold)
+        # Use the special threshold if defined for this image, otherwise use the default
+        image_name = image_path.split('/')[-1]
+        current_threshold = special_thresholds.get(image_name, threshold)
+        locations = np.where(result >= current_threshold)
+        
         matches = list(zip(*locations[::-1]))  # Reverse the order of coordinates
         
         # Calculate the center points of all matches and black out the matched areas
