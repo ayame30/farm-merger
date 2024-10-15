@@ -14,40 +14,42 @@ merging_points = list()
 resize_factor = 1
 
 start_merging = False
+monitor_index = "Primary"
 
 def create_gui():
     dpg.create_context( )
-    with dpg.window(label="Farm Merger v0.1", no_title_bar=True, no_move=True, no_collapse=True, width=400, height=600):
+    with dpg.window(label="Farm Merger v0.1", no_title_bar=True, no_move=True, no_collapse=True, width=400, height=550):
         dpg.add_text("Farm Merger v0.1", color=(255, 165, 0))  # Orange color with increased font size
+        dpg.add_spacer(height=5)
+        dpg.add_text(f"** Disclaimer: Image recognition using openCV, mouse moving using pixel coordinates, so remember to update the merging slots after moving the map, always keep the gameplay on top of other windows", wrap=300)
         dpg.add_spacer(height=20)
         
         with dpg.group(horizontal=True):
             dpg.add_text("Merge Count:")
-            dpg.add_radio_button(tag="merge_count", items=[3, 5], default_value=merge_count, horizontal=True, callback=update_merge_count)
+            dpg.add_radio_button(tag="merge_count", items=[3, 5, 10], default_value=merge_count, horizontal=True, callback=update_merge_count)
         dpg.add_spacer(height=10)
 
         with dpg.group(horizontal=True):
-            dpg.add_text("Start/Pause Key:")
+            dpg.add_text("Start/Pause HotKey:")
             dpg.add_button(label=f"{'+'.join(sorted(hotkey))}", callback=record_hotkey, tag="hotkey_display", width=100)
         dpg.add_spacer(height=10)
 
         with dpg.group(horizontal=True):
-            dpg.add_text("Selected area: ")
+            dpg.add_text("Screen Area: ")
             dpg.add_button(label="", callback=select_area_callback, tag="area_info", width=200)
         dpg.add_spacer(height=10)
 
         with dpg.group(horizontal=True):
-            dpg.add_text("Merge Points: ")
+            dpg.add_text("Merging Slots: ")
             dpg.add_button(label="", callback=select_merging_points_callback, tag="merging_points", width=200)
         dpg.add_spacer(height=10)
 
         with dpg.group(horizontal=True):
-            dpg.add_text("Resize factor: ")
+            dpg.add_text("Game Zoom level: ")
             dpg.add_input_text(default_value=resize_factor, tag="resize_factor", callback=input_resize_factor_callback, width=100)
             dpg.add_button(label="Calculate", callback=calculate_resize_factor_callback, tag="calculate_resize_factor_button")
         dpg.add_spacer(height=10)
-        
-        
+
         with dpg.theme() as green_btn_theme:
             with dpg.theme_component(dpg.mvButton):
                 dpg.add_theme_color(dpg.mvThemeCol_Button, (77, 214, 98))
@@ -68,7 +70,7 @@ def create_gui():
         with dpg.group():
             dpg.add_text("Log:")
             dpg.add_input_text(multiline=True, readonly=True, tag="log_output",  height=80, width=300)
-    dpg.create_viewport(title="Farm Merger", width=400, height=600)
+    dpg.create_viewport(title="Farm Merger", width=400, height=550)
     dpg.setup_dearpygui()
     dpg.show_viewport()
     dpg.start_dearpygui()
@@ -131,6 +133,8 @@ def start_merge():
                     pyautogui.sleep(0.1)  # Adjust delay as needed
                 
                 log_message("Dragging operations completed.")
+            if not start_merging:
+                break
         if not perform_merge:
             log_message("No more merges to perform.")
             log_message("Pausing... Please resume with hotkey.")
