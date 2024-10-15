@@ -1,2 +1,5 @@
 venv
 __pycache__
+farm_merger/build
+farm_merger/dist
+*.spec

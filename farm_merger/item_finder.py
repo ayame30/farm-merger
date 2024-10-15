@@ -10,15 +10,17 @@ special_thresholds = {
 
 class ImageFinder:
     @staticmethod
-    def find_best_resize_factor(threshold=0.80):
+    def find_best_resize_factor(area = None, threshold=0.80):
         print("Finding best resize factor")
+        if area is None or len(area) != 4:
+            area = (0, 0, pyautogui.size()[0], pyautogui.size()[1])
         best_factor = 0.5
         best_total_matches = 0
         image_paths = ['./img/cow1.png', './img/wheat1.png', './img/chicken1.png', './img/soybean1.png', './img/corn1.png']
         for factor in np.arange(0.8, 2.1, 0.1):  # From 0.8 to 2.0 with 0.1 step
             total_matches = 0
             for image_path in image_paths:
-                screen_points, _ = ImageFinder.find_image_on_screen(image_path, 0, 0, pyautogui.size()[0], pyautogui.size()[1], resize_factor=factor, threshold=threshold)
+                screen_points, _ = ImageFinder.find_image_on_screen(image_path, area[0], area[1], area[2], area[3], resize_factor=factor, threshold=threshold)
                 total_matches += len(screen_points)
             if total_matches > best_total_matches:
                 best_total_matches = total_matches

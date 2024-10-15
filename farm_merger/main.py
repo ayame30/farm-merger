@@ -45,7 +45,7 @@ if __name__ == "__main__":
             print("F1 pressed. Stopping the program.")
             os._exit(0)
 
-    # Start the keyboard listener in a non-blocking way
+    # Start the  listener in a non-blocking way
     listener = keyboard.Listener(on_press=on_press)
     listener.start()
 

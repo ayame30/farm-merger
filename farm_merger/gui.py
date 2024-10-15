@@ -5,6 +5,8 @@ from item_finder import ImageFinder
 from screen_area_selector import ScreenAreaSelector
 import os
 import pyautogui
+
+
 merge_count = 5
 area = tuple()
 hotkey = {"f1"}
@@ -15,8 +17,8 @@ start_merging = False
 
 def create_gui():
     dpg.create_context( )
-    with dpg.window(label="Farm Merger", no_title_bar=True, no_move=True, no_collapse=True, width=400, height=600):
-        dpg.add_text("Farm Merger", color=(255, 165, 0))  # Orange color with increased font size
+    with dpg.window(label="Farm Merger v0.1", no_title_bar=True, no_move=True, no_collapse=True, width=400, height=600):
+        dpg.add_text("Farm Merger v0.1", color=(255, 165, 0))  # Orange color with increased font size
         dpg.add_spacer(height=20)
         
         with dpg.group(horizontal=True):
@@ -84,6 +86,20 @@ def start_merge():
     global start_merging
     img_folder = './img'
     image_files = get_image_file_paths(img_folder)
+    # Check if all necessary parameters are set
+    if len(area) != 4:
+        log_message("Error: Screen area not properly set.")
+        return
+    
+    if resize_factor == 0:
+        log_message("Error: Resize factor not set or invalid.")
+        return
+    
+    if len(merging_points) < merge_count - 1:
+        log_message(f"Error: Not enough merging points set. Expected {merge_count - 1}, got {len(merging_points)}.")
+        return
+    
+    log_message("Starting merge process...")
     while True:
         if not start_merging:
             break
@@ -130,8 +146,9 @@ def update_merge_count(sender, app_data, user_data):
     global merge_count
     global merging_points
     merge_count = int(app_data)
-    dpg.set_item_label("merging_points", "")
-    merging_points = list()
+    if merge_count - 1 > len(merging_points):
+        dpg.set_item_label("merging_points", "")
+        merging_points = list()
 
 def log_message(message):
     current_log = dpg.get_value("log_output")
@@ -162,6 +179,7 @@ def start_button_callback():
     dpg.hide_item("start_button")
     dpg.show_item("stop_button")
     log_message("Monitoring started...")
+    log_message(f"Waiting for hotkey: {hotkey}")
     keyboard.hook(on_hotkey)
 
 
@@ -202,7 +220,7 @@ def calculate_resize_factor_callback():
     image_finder = ImageFinder()
     dpg.configure_item("calculate_resize_factor_button", enabled=False)
     dpg.set_value("resize_factor", f"Calculating...")
-    best_resize_factor = image_finder.find_best_resize_factor()
+    best_resize_factor = image_finder.find_best_resize_factor(area)
     dpg.set_value("resize_factor", f"{best_resize_factor}")
     dpg.configure_item("calculate_resize_factor_button", enabled=True)
     resize_factor = best_resize_factor
