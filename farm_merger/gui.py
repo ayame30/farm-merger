@@ -7,6 +7,7 @@ from multiprocessing import Process, Queue
 from merging_points_selector import MergingPointsSelector
 from item_finder import ImageFinder
 from screen_area_selector import ScreenAreaSelector
+import multiprocessing
 
 p = None
 merge_count = 5
@@ -241,6 +242,16 @@ def start_button_callback():
     global hotkey
     dpg.hide_item("start_button")
     dpg.show_item("stop_button")
+    # Disable all buttons
+    dpg.disable_item("merge_count")
+    dpg.disable_item("hotkey_display")
+    dpg.disable_item("stop_hotkey_display")
+    dpg.disable_item("area_info")
+    # Disable input fields
+    dpg.disable_item("merging_points")
+    dpg.disable_item("resize_factor")
+    dpg.disable_item("calculate_resize_factor_button")
+
     log_message("Monitoring started...")
     log_message(f"Waiting for hotkey: {hotkey}")
     keyboard.add_hotkey('+'.join(sorted(hotkey)), start_merge_process)
@@ -248,7 +259,18 @@ def start_button_callback():
 def stop_button_callback():
     dpg.hide_item("stop_button")
     dpg.show_item("start_button")
+    # Enable all buttons
+    dpg.enable_item("merge_count")
+    dpg.enable_item("hotkey_display")
+    dpg.enable_item("stop_hotkey_display")
+    dpg.enable_item("area_info")
+    # Disable input fields
+    dpg.enable_item("merging_points")
+    dpg.enable_item("resize_factor")
+    dpg.enable_item("calculate_resize_factor_button")
+
     log_message("Monitoring stopped")
+    terminate_merge_process()
     keyboard.remove_hotkey(start_merge_process)
 
 def select_merging_points_callback():
@@ -287,11 +309,11 @@ def record_key(display_tag, key_type, invalid_key):
 def calculate_resize_factor_callback():
     global resize_factor
     image_finder = ImageFinder()
-    dpg.configure_item("calculate_resize_factor_button", enabled=False)
+    dpg.disable_item("calculate_resize_factor_button")
     dpg.set_value("resize_factor", "Calculating...")
     best_resize_factor = image_finder.find_best_resize_factor(area)
     dpg.set_value("resize_factor", f"{best_resize_factor}")
-    dpg.configure_item("calculate_resize_factor_button", enabled=True)
+    dpg.enable_item("calculate_resize_factor_button")
     resize_factor = best_resize_factor
 
 def select_area_callback():
@@ -302,4 +324,5 @@ def select_area_callback():
     area = coordinates
 
 if __name__ == "__main__":
+    multiprocessing.freeze_support()
     create_gui()
